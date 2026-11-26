@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>과제 관리 앱</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#111;--sub:#8a8d94;--line:#e8e9ed;--btn:#26272b;--btnt:#fff;--red:#e5484d;--redbg:#fdecee;--chip:#ececf0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121214;--card:#1c1c1f;--ink:#f3f3f5;--sub:#9a9ca3;--line:#2c2c30;--btn:#f1f1f3;--btnt:#111;--redbg:#3a1f22;--chip:#2a2a2e;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#121214;--card:#1c1c1f;--ink:#f3f3f5;--sub:#9a9ca3;--line:#2c2c30;--btn:#f1f1f3;--btnt:#111;--redbg:#3a1f22;--chip:#2a2a2e;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;outline:none}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.app{position:relative;max-width:430px;height:100%;margin:0 auto;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.scr{flex:1;overflow-y:auto;padding:20px 20px 28px}
+.nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:8px 8px 10px}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--sub)}
+.nav button.on{color:var(--ink);font-weight:700}
+h1{font-size:22px;margin:4px 0 2px}.sub{color:var(--sub);font-size:13px}
+.hero{background:#26272b;color:#fff;border-radius:22px;padding:18px 20px;margin:16px 0}
+.hero b{font-size:34px}.hero .sub{color:#b9bbc2}
+.bar{height:6px;border-radius:9px;background:rgba(255,255,255,.18);margin-top:12px;overflow:hidden}.bar i{display:block;height:100%;background:#fff;border-radius:9px}
+.seg{display:flex;background:var(--chip);border-radius:14px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;padding:9px;border-radius:11px;font-size:14px;color:var(--sub)}.seg .on{background:var(--btn);color:var(--btnt);font-weight:600}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:18px;padding:14px 14px;margin-bottom:10px}
+.row .m{flex:1;min-width:0}.row .n{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb{width:24px;height:24px;border-radius:50%;border:2px solid #c7c9cf;display:grid;place-items:center;color:transparent;flex:none}
+.cb.on{background:var(--btn);border-color:var(--btn);color:var(--btnt)}
+.dd{font-size:12px;font-weight:700;padding:4px 9px;border-radius:99px;background:var(--chip);color:var(--sub);flex:none}.dd.hot{background:var(--redbg);color:var(--red)}
+.fab{position:absolute;right:20px;bottom:86px;width:56px;height:56px;border-radius:50%;background:var(--btn);color:var(--btnt);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.tag{font-size:10px;background:var(--chip);color:var(--sub);border-radius:6px;padding:2px 6px;margin-left:6px;font-weight:600}
+.car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 20px 14px;margin:0 -20px;scrollbar-width:none}.car::-webkit-scrollbar{display:none}
+.cd{flex:0 0 78%;scroll-snap-align:center;background:var(--card);border-radius:26px;padding:20px;min-height:300px;display:flex;flex-direction:column;transform:scale(.93);opacity:.65;transition:.25s;box-shadow:0 10px 24px rgba(0,0,0,.07)}
+.cd.act{transform:none;opacity:1}.cd.fin{background:var(--chip)}.cd.fin h3{text-decoration:line-through;color:var(--sub)}
+.cd .r1{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--sub);font-weight:600}
+.cd h3{font-size:22px;margin:18px 0 8px}.cd p{margin:0;color:var(--sub);font-size:14px;line-height:1.55;flex:1}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin:14px 0}.meta span{background:var(--chip);padding:5px 9px;border-radius:99px}
+.pr{padding:2px 8px;border-radius:99px;background:var(--chip)}.pr.h{background:var(--redbg);color:var(--red)}
+.go{width:100%;padding:13px;border-radius:14px;background:var(--btn);color:var(--btnt);font-weight:700}.go.sec{background:var(--chip);color:var(--ink)}.go.dng{background:var(--redbg);color:var(--red)}
+.ctl{display:flex;align-items:center;justify-content:center;gap:14px}.ctl button{width:36px;height:36px;border-radius:50%;background:var(--card);display:grid;place-items:center}
+.dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:200px}.dots i{width:6px;height:6px;border-radius:9px;background:#c7c9cf}.dots i.on{background:var(--ink);width:16px}
+.ov{position:absolute;inset:0;background:var(--bg);z-index:10;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-weight:700}.top button{width:36px;height:36px;display:grid;place-items:center}
+.lab{font-size:12px;color:var(--sub);margin:14px 0 6px;display:block}
+.drop{background:var(--card);border-radius:22px;padding:36px 20px;text-align:center;margin:12px 0 16px}
+.note{background:var(--redbg);color:var(--red);border-radius:12px;padding:10px 12px;font-size:12px;line-height:1.5;margin:10px 0}.note.ok{background:var(--chip);color:var(--ink)}
+.thumb{position:relative;width:100%;max-height:170px;border-radius:14px;overflow:hidden;background:var(--chip)}.thumb img{width:100%;max-height:170px;object-fit:contain;display:block}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.cal-h button{width:34px;height:34px;border-radius:50%;background:var(--card);display:grid;place-items:center}
+.dow,.wk{display:grid;grid-template-columns:repeat(7,1fr)}.dow div{text-align:center;font-size:12px;color:var(--sub);padding:6px 0}
+.wk{background:var(--card);border-radius:12px;margin-bottom:6px;padding:4px 0 6px;row-gap:3px}
+.dn{height:30px;display:grid;place-items:center;font-size:13px}.dn span{width:26px;height:26px;border-radius:50%;display:grid;place-items:center}
+.dn.o{color:var(--sub);opacity:.5}.dn.t span{background:var(--btn);color:var(--btnt)}.dn.s span{outline:2px solid var(--ink)}
+.gb{height:17px;margin:0 2px;border-radius:6px;font-size:10px;line-height:17px;overflow:hidden;white-space:nowrap}.gb b{background:rgba(255,255,255,.8);color:#222;border-radius:4px;padding:0 4px;margin-left:2px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.set{background:var(--card);border-radius:18px;padding:4px 16px;margin-bottom:14px}.set h4{margin:14px 0 4px;font-size:12px;color:var(--sub)}
+.si{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-top:1px solid var(--line);font-size:15px;width:100%;text-align:left}.si:first-of-type{border-top:0}
+.tg{width:44px;height:26px;border-radius:99px;background:#c7c9cf;position:relative;flex:none}.tg:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}.tg.on{background:var(--btn)}.tg.on:after{left:21px;background:var(--btnt)}
+.av{width:64px;height:64px;border-radius:50%;background:var(--btn);color:var(--btnt);display:grid;place-items:center;font-size:24px;font-weight:700}
+.big{text-align:center;margin-top:90px}.ckc{width:84px;height:84px;border-radius:50%;background:var(--chip);display:grid;place-items:center;margin:0 auto 18px}
+.sheet{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.4);display:flex;align-items:flex-end}.sheet>div{background:var(--bg);width:100%;border-radius:24px 24px 0 0;padding:22px 20px 30px;max-height:80%;overflow:auto}
+.toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);background:var(--btn);color:var(--btnt);padding:10px 16px;border-radius:99px;font-size:13px;z-index:30;white-space:nowrap}
+.empty{text-align:center;color:var(--sub);padding:40px 10px;font-size:14px;line-height:1.6}.tb{background:var(--card);border-radius:22px;padding:16px;margin-bottom:16px}.tb h3{margin:0 0 4px;font-size:16px}.tp{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}.tp .m{flex:1;min-width:0;text-align:left}.tp .n{font-size:14px;font-weight:600}.tp .cb{margin-top:1px}.go:disabled{opacity:.5;cursor:default}.brd{width:38px;height:38px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;margin-bottom:12px;overflow:hidden}.brd img{width:30px;height:30px;display:block}
+.au{--card:#fff;--ink:#111;--sub:#8a8d94;--line:#e8e9ed;--chip:#ececf0;--btn:#26272b;--btnt:#fff;--redbg:#fdecee;color:#111;position:absolute;inset:0;z-index:50;background:#fff;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:48px 24px 32px}.au>*{flex:none}
+.lg{display:flex;align-items:center;gap:8px;margin-top:7vh}.lgi{width:64px;height:64px;opacity:0;animation:fin .6s .1s forwards}
+.tk{font-size:40px;font-weight:800;letter-spacing:3px;display:flex}.tk span{opacity:0;transform:translateY(10px);animation:ltr .5s forwards}
+.tg2{margin:18px 0 28px;text-align:center;color:#6b6e75;font-size:15px;line-height:1.6;opacity:0;animation:fin .7s 1.5s forwards}
+.af{width:100%;max-width:340px;opacity:0;animation:fin .7s 1.9s forwards}
+@keyframes fin{to{opacity:1}}@keyframes ltr{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.au *{animation-duration:.01s!important;animation-delay:0s!important}}
+</style></head>
+<body><div class="app" id="app"></div>
+<input type="file" id="fcam" accept="image/*" capture="environment" hidden>
+<input type="file" id="falb" accept="image/*" hidden>
+<script>
+const LOGO="data:image/png;base64,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";
+const AK="ais_acc",SK="ais_sess";
+const ra=()=>{try{return JSON.parse(localStorage.getItem(AK)||"{}")}catch(e){return{}}},wa=a=>{try{localStorage.setItem(AK,JSON.stringify(a))}catch(e){}};
+let SESS=null;try{SESS=JSON.parse(localStorage.getItem(SK)||"null")}catch(e){}
+const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',task:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',cal:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/>',plus:'<path d="M12 5v14M5 12h14"/>',l:'<path d="M15 5l-7 7 7 7"/>',r:'<path d="M9 5l7 7-7 7"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',img:'<rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4 4 3 3-2 4 3"/>',trash:'<path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/>',ck:'<path d="M6 12.5l4 4 8-9"/>'};
+const svg=(n,s=22)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const pad=n=>String(n).padStart(2,'0'),ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const dt=s=>{const[a,b,c]=s.slice(0,10).split('-').map(Number);return new Date(a,b-1,c)};
+const T0=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())};
+const addD=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const left=t=>Math.round((dt(t.due)-T0())/864e5),dd=n=>n===0?'D-day':n>0?'D-'+n:'D+'+(-n);
+const fdue=s=>{const d=dt(s);return `${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]}) ${s.slice(11,16)}`};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+const COLORS=['139,111,232','236,102,140','46,170,220','240,150,60','60,180,120','200,90,200'];
+/* ---- OpenAI API 연결: API 키는 Vercel 서버 환경 변수에 보관 ---- */
+const AI={s:false,img:true};
+async function aiInit(){AI.s=true;AI.img=true;if(!U.ov&&!U.sheet)R();autoAI()}
+async function aiRequest(task,prompt,image){
+  const res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({task,prompt,image:image||undefined})});
+  let data={};try{data=await res.json()}catch(e){}
+  if(!res.ok)throw new Error(data.error||'AI 요청에 실패했어요.');
+  return data;
+}
+function banner(d){const m=d.ai;if(m==='loading')return'<div class="note ok">AI가 공지 이미지를 분석하는 중이에요…</div>';if(m==='done')return'<div class="note ok">AI가 추출한 정보예요. 이미지와 맞는지 확인하고, 비어 있거나 틀린 항목은 직접 수정하세요.</div>';if(m==='fail')return'<div class="note">AI 분석에 실패했어요. 이미지를 보고 항목을 직접 입력해 주세요.</div>';return d.img?'<div class="note">이 환경에서는 AI 분석을 쓸 수 없어요. 이미지를 보고 직접 입력해 주세요.</div>':'<div class="note ok">직접 입력한 과제예요. 내용을 확인한 뒤 저장하세요.</div>'}
+function fallbackPicks(act){const o=[];for(const t of act)t.steps.forEach((s,i)=>{if(!s.done&&o.length<4)o.push({id:t.id,i,why:''})});return o}
+function todayBox(act){if(!S.set.ai||!act.length)return'';const T=S.today&&S.today.date===ds(T0())?S.today:null,ai=!!T,picks=ai?T.picks:fallbackPicks(act);
+const rows=picks.map(p=>{const t=S.tasks.find(x=>x.id===p.id),s=t&&t.steps[p.i];return s?{t,s,p}:null}).filter(Boolean);const tot=rows.filter(r=>!r.s.done).reduce((a,r)=>a+r.s.m,0);
+const msg=ai?esc(T.summary):'AI 추천 전이에요. 마감이 빠른 순서로 고른 기본 목록이에요.';
+return`<div class="tb"><h3>오늘 AI 추천</h3><div class="sub" style="line-height:1.5">${msg}${rows.length&&S.set.time?` (남은 시간 약 ${tot}분)`:''}</div>${rows.map(r=>`<div class="tp"><button class="cb ${r.s.done?'on':''}" onclick="A.step('${r.t.id}',${r.p.i})" aria-label="완료">${svg('ck',14)}</button><button class="m" onclick="A.jump('${r.t.id}',${r.p.i})"><div class="n" style="${r.s.done?'text-decoration:line-through;color:var(--sub)':''}">${esc(r.s.t)}</div><div class="sub">${esc(r.t.name)}${S.set.time?' · '+r.s.m+'분':''}${ai&&r.p.why?' · '+esc(r.p.why):''}</div></button></div>`).join('')}<button class="go ${ai?'sec':''}" style="margin-top:10px" onclick="A.today()" ${U.busy||!AI.s?'disabled':''}>${U.busy?'AI가 오늘 할 일을 고르는 중…':!AI.s?'이 환경에서는 AI 추천을 쓸 수 없어요':ai?'다시 추천받기':'AI에게 오늘 할 일 추천받기'}</button></div>`}
+AI.tried=new Set();
+async function autoAI(){if(!AI.s||AI.busy||!SESS)return;const todo=S.tasks.filter(t=>!t.done&&!t.ai&&!AI.tried.has(t.id)&&!t.steps.some(s=>s.done));if(!todo.length)return;AI.busy=true;if(!U.ov&&!U.sheet)R();for(const t of todo){AI.tried.add(t.id);await aiSteps(t)}AI.busy=false;if(!U.ov&&!U.sheet)R()}
+function evList(){const f=s=>s.slice(5).replace('-','/');return S.events.filter(e=>e.start<=U.sel&&U.sel<=e.end).map(e=>`<div class="row"><span class="sw" style="background:rgb(110,115,125);width:12px;height:12px;margin:0"></span><div class="m"><div class="n">${esc(e.title)}</div><div class="sub">일정 · ${e.start===e.end?f(e.start):f(e.start)+' ~ '+f(e.end)}</div></div><button class="dd" onclick="A.evForm('${e.id}')">수정</button><button class="dd" style="color:var(--red)" onclick="A.evDel('${e.id}')">삭제</button></div>`).join('')}
+async function aiSteps(t){if(!AI.s)return false;try{const prompt=`대학생 과제를 실행 가능한 세부 할 일로 나누세요. 과제 종류(레포트, 발표, 시험, 영상 등)에 맞게 3~6단계를 순서대로 만드세요. JSON 객체로 답하세요: {"steps":[{"t":"할 일 제목(15자 내외)","d":"구체적인 설명 한두 문장","m":예상 소요 분(정수)}]}. 오늘: ${ds(T0())}, 마감: ${t.due}\n과제명: ${t.name}\n설명: ${t.desc||'(없음)'}\n제출 방식: ${t.submit||'(없음)'}`;const v=await aiRequest('steps',prompt);const arr=Array.isArray(v)?v:v.steps;if(!Array.isArray(arr))return false;const st=arr.filter(x=>x&&x.t&&x.d).slice(0,6).map(x=>({t:String(x.t),d:String(x.d),m:Math.max(5,Math.round(+x.m)||30),done:false}));if(st.length<2||!S.tasks.includes(t))return false;st.forEach(s=>{const o=t.steps.find(x=>x.t===s.t);if(o)s.done=o.done});t.steps=st;t.ai=true;save();if((!U.ov||U.ov==='done')&&!U.sheet)R();return true}catch(e){console.error(e);return false}}const KINDS=[[/시험|퀴즈|중간|기말/,[['시험 범위 확인하기','출제 범위와 유형을 공지·강의자료에서 확인해 목록으로 만드세요.',20],['핵심 개념 정리하기','범위별 핵심 개념을 요약 노트로 정리하세요.',60],['문제 풀이하기','예제·기출 문제를 풀며 약한 부분을 찾으세요.',60],['오답 복습하기','틀린 문제를 다시 풀고 개념을 보완하세요.',40]]],
+[/발표|PPT|프레젠|ppt/,[['주제 조사하기','발표 주제의 핵심 내용과 근거 자료를 찾으세요.',40],['발표 구성하기','도입·본론·결론 흐름으로 슬라이드 목차를 짜세요.',25],['PPT 제작하기','구성안에 맞춰 슬라이드를 만들고 자료를 넣으세요.',70],['발표 연습하기','시간을 재며 소리 내어 2회 이상 연습하세요.',30]]],
+[/영상|촬영|편집/,[['영상 기획하기','주제, 시나리오, 촬영 컷 리스트를 정리하세요.',40],['촬영 준비하기','장소·장비·출연자 일정을 확인하세요.',30],['촬영하기','컷 리스트대로 촬영하고 여유 컷을 확보하세요.',90],['편집하기','컷 편집, 자막, 음향을 정리하세요.',90],['최종 확인하기','전체를 재생해 오류를 점검하고 제출 형식에 맞게 내보내세요.',20]]],
+[/레포트|보고서|리포트|분석|report/i,[['관련 자료 조사하기','주제와 관련된 논문·기사·사례 자료를 찾아 수집하세요.',40],['조사한 자료 정리하기','핵심 내용과 출처를 항목별로 정리하세요.',30],['레포트 개요 작성하기','서론·본론·결론의 뼈대와 목차를 잡으세요.',20],['레포트 초안 작성하기','개요에 맞춰 본문을 끝까지 작성하세요.',60],['최종 검토 및 제출하기','오탈자와 출처, 제출 방식을 확인한 뒤 제출하세요.',20]]]];
+const GEN=[['과제 요구사항 확인하기','공지와 설명을 읽고 요구 조건을 정리하세요.',20],['필요 자료 준비하기','과제에 필요한 자료와 도구를 모으세요.',30],['핵심 내용 작성하기','요구사항에 맞춰 주요 내용을 완성하세요.',60],['검토 및 제출하기','빠진 부분을 점검하고 제출하세요.',20]];
+function gen(name,desc){let k=KINDS.find(x=>x[0].test(name))||KINDS.find(x=>x[0].test(desc||''));return(k?k[1]:GEN).map(([t,d,m])=>({t,d,m,done:false}))}
+function mkTask(o){const t={id:'t'+Date.now()+Math.random().toString(36).slice(2,5),done:false,sample:false,imp:2,img:'',created:ds(T0()),...o};t.steps=gen(t.name,t.desc);return t}
+/* ---- 저장소 ---- */
+const KEY='ais_app_v1';let S;
+function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}
+const d=T0(),mk=(n,due,off,desc,sub)=>mkTask({name:n,due:ds(addD(d,due))+'T23:59',created:ds(addD(d,off)),desc,submit:sub,sample:true});
+return{tasks:[mk('발표 PPT 제작',1,-3,'팀 프로젝트 발표 PPT 제작','이메일'),mk('영어 시험 준비',3,-2,'중간고사 시험 범위 공부','시험'),mk('데이터베이스 활용 사례 분석 레포트',7,0,'데이터베이스 활용 사례를 분석하고 보고서 작성','LMS 업로드')],
+set:{alarm:true,push:true,ai:true,time:true,dark:false,lead:'1일 전'},prof:{name:'김학생',school:'한국대학교 컴퓨터공학과',year:'3학년'}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+S=load();S.events=S.events||[];
+const U={tab:'home',filter:'today',y:T0().getFullYear(),m:T0().getMonth(),sel:ds(T0()),ov:null,draft:null,sheet:null,eid:null,idx:0};
+const imp=t=>t.imp||2,cmp=(a,b)=>a.due.localeCompare(b.due)||imp(b)-imp(a);
+const prio=(t)=>{const l=left(t);return l<=2||imp(t)===3?['높음','h']:l<=5?['보통','']:['낮음','']};
+function toast(m){const e=document.createElement('div');e.className='toast';e.textContent=m;$('app').appendChild(e);setTimeout(()=>e.remove(),1800)}
+/* ---- 화면 ---- */
+function home(){const act=S.tasks.filter(t=>!t.done).sort(cmp),all=S.tasks.flatMap(t=>t.steps),dn=all.filter(s=>s.done).length,pc=all.length?Math.round(dn/all.length*100):0;
+let h=`<h1>오늘의 할 일</h1><div class="sub">마감이 빠른 과제부터 세부 단계를 보여줘요</div><div class="hero"><div class="sub">전체 진행률</div><b>${pc}%</b> <span class="sub">${dn} / ${all.length} 단계 완료</span><div class="bar"><i style="width:${pc}%"></i></div></div>`;
+if(!S.set.ai)return h+`<div class="empty">AI 할 일 추천이 꺼져 있어요.<br>프로필 › AI 설정에서 켤 수 있어요.</div>`;
+const cards=[];act.forEach(t=>t.steps.forEach((s,i)=>cards.push({t,s,i})));
+if(!cards.length)return h+`<div class="empty">진행할 할 일이 없어요.<br>과제 탭에서 + 버튼으로 과제를 등록해 보세요.</div>`;
+U.idx=Math.min(U.idx,cards.length-1);
+h+=`<div class="car" id="car" onscroll="A.sc()">`+cards.map(({t,s,i},k)=>{const[p,c]=prio(t),l=left(t);return`<div class="cd ${s.done?'fin':''} ${k===U.idx?'act':''}" data-k="${t.id}:${i}"><div class="r1"><span>${esc(t.name)}${t.sample?'<span class="tag">샘플</span>':''}<span class="tag">${t.ai?'AI 추천':'기본 추천'}</span></span><span class="pr ${c}">${p}</span></div><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="meta">${S.set.time?`<span>예상 ${s.m}분</span>`:''}<span>${i+1} / ${t.steps.length} 단계</span><span>${dd(l)}</span></div><button class="go ${s.done?'sec':''}" onclick="A.step('${t.id}',${i})">${s.done?'완료 취소':'완료하기'}</button><div style="display:flex;gap:8px;margin-top:8px"><button class="go sec" style="padding:10px;font-size:13px" onclick="A.stepEdit('${t.id}',${i})">수정</button><button class="go dng" style="padding:10px;font-size:13px" onclick="A.stepDel('${t.id}',${i})">삭제</button></div></div>`}).join('')+`</div>
+<div class="ctl"><button onclick="A.go(-1)" aria-label="이전">${svg('l',18)}</button><div class="dots" id="dots">${cards.map((_,k)=>`<i class="${k===U.idx?'on':''}"></i>`).join('')}</div><button onclick="A.go(1)" aria-label="다음">${svg('r',18)}</button></div>
+<p class="sub" style="text-align:center;margin-top:14px">${AI.busy?'AI가 과제에 맞춰 할 일을 만드는 중이에요…':cards.every(c=>c.t.ai)?'AI가 과제 내용에 맞춰 추천한 할 일이에요':AI.s?'일부 과제는 AI 추천에 실패해 기본 할 일을 보여줘요':'AI를 쓸 수 없는 환경이라 과제 유형별 기본 할 일을 보여줘요'}</p>`;
+return h}
+function tasks(){const n=T0(),dow=(n.getDay()+6)%7,ws=ds(addD(n,-dow)),we=ds(addD(n,6-dow)),td=ds(n);
+const cnt=S.tasks.filter(t=>!t.done&&t.due.slice(0,10)===td).length;
+let l=S.tasks.slice().sort((a,b)=>(a.done-b.done)||cmp(a,b)).filter(t=>U.filter==='all'||(U.filter==='today'?t.due.slice(0,10)===td:t.due.slice(0,10)>=ws&&t.due.slice(0,10)<=we));
+return`<div class="sub">안녕하세요, ${esc(S.prof.name)}님</div><h1>이번 주도 화이팅이에요</h1><div class="hero"><div class="sub">오늘 마감 과제</div><b>${cnt}</b> 개</div>
+<div class="seg">${[['today','오늘'],['week','이번 주'],['all','전체']].map(([k,v])=>`<button class="${U.filter===k?'on':''}" onclick="U.filter='${k}';R()">${v}</button>`).join('')}</div>
+${l.length?l.map(t=>{const d=left(t);return`<div class="row" style="${t.done?'opacity:.5':''}"><button class="cb ${t.done?'on':''}" onclick="A.tdone('${t.id}')" aria-label="완료">${svg('ck',14)}</button><button class="m" style="text-align:left" onclick="A.edit('${t.id}')"><div class="n">${esc(t.name)}${t.sample?'<span class="tag">샘플</span>':''}</div><div class="sub">${fdue(t.due)}</div></button><span class="dd ${d<=1&&!t.done?'hot':''}">${dd(d)}</span></div>`}).join(''):`<div class="empty">해당하는 과제가 없어요.</div>`}
+<button class="fab" onclick="A.open('add')" aria-label="과제 등록">${svg('plus',26)}</button>`}
+function calv(){const y=U.y,m=U.m,first=new Date(y,m,1),off=(first.getDay()+6)%7,nd=new Date(y,m+1,0).getDate(),wks=Math.ceil((off+nd)/7),td=ds(T0());
+const idxOf=t=>S.tasks.indexOf(t),col=t=>t.ev?'110,115,125':COLORS[idxOf(t)%COLORS.length];
+const al=(t,d)=>{if(t.ev)return .55;const a=dt(t.created),b=dt(t.due),x=b-a?(d-a)/(b-a):1;return+(.2+.8*Math.max(0,Math.min(1,x))).toFixed(2)};
+let h=`<div class="cal-h"><button onclick="A.mo(-1)" aria-label="이전 달">${svg('l',16)}</button><h1 style="margin:0">${y}년 ${m+1}월</h1><button onclick="A.mo(1)" aria-label="다음 달">${svg('r',16)}</button></div><div class="dow">${['월','화','수','목','금','토','일'].map(d=>`<div>${d}</div>`).join('')}</div>`;
+for(let w=0;w<wks;w++){const days=[...Array(7)].map((_,i)=>addD(first,w*7+i-off));let c='';
+days.forEach((d,i)=>{const s=ds(d);c+=`<button class="dn ${d.getMonth()!==m?'o':''} ${s===td?'t':''} ${s===U.sel?'s':''}" style="grid-row:1;grid-column:${i+1}" onclick="U.sel='${s}';R()"><span>${d.getDate()}</span></button>`});
+const lanes=[];[...S.tasks,...S.events.map(e=>({id:e.id,name:e.title,created:e.start,due:e.end+'T00:00',ev:true}))].forEach(t=>{const cs=t.created<=t.due?t.created.slice(0,10):t.due.slice(0,10),a=cs>ds(days[0])?cs:ds(days[0]),b=t.due.slice(0,10)<ds(days[6])?t.due.slice(0,10):ds(days[6]);if(a>b)return;
+const c1=days.findIndex(d=>ds(d)===a),c2=days.findIndex(d=>ds(d)===b);let L=0;while(lanes[L]&&lanes[L]>=c1)L++;lanes[L]=c2;
+const k=col(t),a1=al(t,dt(a)),a2=al(t,dt(b));
+c+=`<div class="gb" style="grid-row:${L+2};grid-column:${c1+1}/${c2+2};background:linear-gradient(90deg,rgba(${k},${a1}),rgba(${k},${a2}));${t.done?'opacity:.45':''}">${a===cs||c1===0?`<b>${esc(t.name)}</b>`:''}</div>`});
+h+=`<div class="wk">${c}</div>`}
+const sd=dt(U.sel),on=S.tasks.filter(t=>t.created.slice(0,10)<=U.sel&&U.sel<=t.due.slice(0,10));
+h+=`<h4 style="margin:18px 0 8px">${sd.getMonth()+1}월 ${sd.getDate()}일</h4>`+(on.length?on.map(t=>{const due=t.due.slice(0,10)===U.sel;return`<div class="row" style="cursor:pointer" onclick="A.edit('${t.id}')"><span class="sw" style="background:rgb(${col(t)});width:12px;height:12px;margin:0"></span><div class="m"><div class="n">${esc(t.name)}</div><div class="sub">${due?'오늘 마감 · '+t.due.slice(11,16):'진행 중 · 마감 '+fdue(t.due)}</div></div><span class="dd ${due?'hot':''}">${due?'마감':dd(left(t))}</span><button class="dd" onclick="event.stopPropagation();A.rn('${t.id}')">이름</button><button class="dd" style="color:var(--red)" onclick="event.stopPropagation();A.cdel('${t.id}')">삭제</button></div>`}).join(''):`<div class="empty">이 날짜에 진행 중인 과제가 없어요.</div>`)+evList()+`<button class="go" style="margin-top:14px" onclick="A.evForm()">일정 추가</button>`;
+return h}
+function prof(){const p=S.prof,s=S.set,tg=k=>`<button class="si" onclick="A.tg('${k}')"><span>${{alarm:'과제 알림',ai:'AI 할 일 추천',time:'예상 소요 시간 표시',push:'푸시 알림',dark:'다크 모드'}[k]}</span><span class="tg ${s[k]?'on':''}"></span></button>`,
+it=(l,f,v='')=>`<button class="si" onclick="${f}"><span>${l}</span><span class="sub">${v}</span></button>`;
+return`<h1>프로필</h1><div class="row" style="margin-top:14px"><div class="av">${esc(p.name[0]||'?')}</div><div class="m"><div class="n" style="font-size:18px">${esc(p.name)}</div><div class="sub">${esc(p.school)} · ${esc(p.year)}</div></div><button class="dd" onclick="A.pedit()">수정</button></div>
+<div class="set"><h4>과제 관리</h4>${tg('alarm')}${it('마감일 알림 시점','A.lead()',s.lead)}${it('완료한 과제 모아보기','A.doneList()',S.tasks.filter(t=>t.done).length+'개')}${it('과제 데이터 관리','A.data()')}</div>
+<div class="set"><h4>AI 설정</h4>${tg('ai')}${tg('time')}${it('AI 추천 결과 다시 생성하기','A.regen()')}</div>
+<div class="set"><h4>앱 설정</h4>${tg('push')}${tg('dark')}${it('개인정보 처리방침',"A.info('개인정보 처리방침','과제 데이터와 계정 정보는 현재 이 브라우저에 저장됩니다. AI 기능을 사용할 때 과제명·설명·마감 정보 또는 선택한 공지 이미지가 AI 처리를 위해 OpenAI로 전송될 수 있습니다. 비밀번호와 API 키를 공유하지 마세요. 현재 로그인은 데모 방식이며 실제 보안 인증이나 기기 간 동기화를 제공하지 않습니다.')")}${it('이용약관',"A.info('이용약관','본 앱은 데모 버전이며 AI 분석 결과는 반드시 직접 확인해야 합니다.')")}${it('로그아웃',"A.ask('로그아웃','로그아웃할까요?','A.logoutOk()','로그아웃')",SESS?esc(SESS.email):'')}</div>
+<div class="set"><h4>앱 정보</h4>${it('앱 버전',"",'1.0.0')}${it('고객 문의',"A.info('고객 문의','support@example.com (데모)')")}${it('사용자 피드백',"A.info('사용자 피드백','의견을 보내주셔서 감사합니다. (데모)')")}</div>`}
+function form(t,imgOnly){return`<label class="lab">과제명</label><input id="f_n" value="${esc(t.name)}" placeholder="미입력"><label class="lab">마감일 및 시간</label><input id="f_d" type="datetime-local" value="${t.due||''}"><label class="lab">제출 방식</label><input id="f_s" value="${esc(t.submit)}" placeholder="미입력"><label class="lab">중요도</label><select id="f_i">${[[1,'낮음'],[2,'보통'],[3,'높음']].map(([v,l])=>`<option value="${v}" ${imp(t)==v?'selected':''}>${l}</option>`).join('')}</select><label class="lab">과제 설명</label><textarea id="f_e" rows="4" placeholder="미입력">${esc(t.desc)}</textarea>${t.img?`<label class="lab">첨부 이미지</label><div class="thumb"><img src="${t.img}" alt="공지 이미지"><button class="dd" style="position:absolute;right:8px;top:8px" onclick="A.rmimg()">삭제</button></div>`:''}`}
+const rd=()=>({name:$('f_n').value.trim(),due:$('f_d').value,submit:$('f_s').value.trim(),imp:+$('f_i').value,desc:$('f_e').value.trim()});
+function overlay(){const o=U.ov;if(!o)return'';
+if(o==='add')return`<div class="ov"><div class="top"><button onclick="A.close()" aria-label="닫기">${svg('x')}</button>과제 등록<span style="width:36px"></span></div><div class="scr"><div class="drop">${svg('cam',40)}<h3>과제 공지 이미지를<br>촬영하거나 선택해주세요</h3><div class="sub">공지 내용에서 과제 정보를 추출해요</div></div><button class="go" onclick="$('fcam').click()">사진 촬영하기</button><button class="go sec" style="margin-top:10px" onclick="$('falb').click()">앨범에서 선택하기</button><p class="sub" style="text-align:center;margin-top:18px">이미지가 없다면 <button style="text-decoration:underline" onclick="A.manual()">직접 입력하기</button></p></div></div>`;
+if(o==='confirm'){const d=U.draft;return`<div class="ov"><div class="top"><button onclick="U.ov='add';R()" aria-label="뒤로">${svg('l')}</button>과제 정보 확인<span style="width:36px"></span></div><div class="scr">${d.img?`<div class="thumb"><img src="${d.img}" alt="공지 이미지"></div>`:''}${banner(d)}${form(d)}<button class="go" style="margin-top:20px" onclick="A.add()">저장하기</button></div></div>`}
+if(o==='edit'){const t=S.tasks.find(x=>x.id===U.eid);return`<div class="ov"><div class="top"><button onclick="A.close()" aria-label="뒤로">${svg('l')}</button>과제 수정<button onclick="A.del()" aria-label="삭제">${svg('trash')}</button></div><div class="scr">${form(t)}<div style="display:flex;gap:10px;margin-top:20px"><button class="go dng" onclick="A.del()">삭제하기</button><button class="go" onclick="A.upd()">수정 완료</button></div></div></div>`}
+if(o==='done')return`<div class="ov"><div class="scr"><div class="big"><div class="ckc">${svg('ck',38)}</div><h2>과제가 등록되었어요!</h2><p class="sub">이제 마감일을 잊지 않고<br>관리할 수 있어요</p><button class="go" style="margin-top:50px" onclick="A.fin()">확인</button></div></div></div>`;
+if(o==='doneList'){const l=S.tasks.filter(t=>t.done);return`<div class="ov"><div class="top"><button onclick="A.close()" aria-label="뒤로">${svg('l')}</button>완료한 과제<span style="width:36px"></span></div><div class="scr">${l.length?l.map(t=>`<div class="row"><button class="cb on" onclick="A.tdone('${t.id}')" aria-label="완료 취소">${svg('ck',14)}</button><div class="m"><div class="n">${esc(t.name)}</div><div class="sub">${fdue(t.due)}</div></div></div>`).join(''):'<div class="empty">완료한 과제가 아직 없어요.</div>'}</div></div>`}return''}
+function sheet(){const s=U.sheet;return s?`<div class="sheet" onclick="U.sheet=null;R()"><div onclick="event.stopPropagation()"><h3 style="margin-top:0">${s.t}</h3>${s.b}</div></div>`:''}
+async function hp(p,salt){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return btoa(unescape(encodeURIComponent(salt+p)))}}
+function authForm(){const up=U.am==='up';$('af').innerHTML=(up?`<label class="lab">이름</label><input id="a_n" autocomplete="name" placeholder="이름">`:'')+`<label class="lab">이메일</label><input id="a_e" type="email" autocomplete="email" placeholder="example@univ.ac.kr"><label class="lab">비밀번호</label><input id="a_p" type="password" autocomplete="${up?'new-password':'current-password'}" placeholder="6자 이상">`+(up?`<label class="lab">비밀번호 확인</label><input id="a_c" type="password" autocomplete="new-password" placeholder="비밀번호 다시 입력">`:'')+`<div class="note" id="aerr" style="display:none"></div><button class="go" style="margin-top:18px" onclick="A.auth()">${up?'회원가입':'로그인'}</button><p class="sub" style="text-align:center;margin-top:14px;font-size:12px;line-height:1.5">데모 로그인입니다. 계정 정보는 이 브라우저에만 저장되며 실제 서버 인증은 제공하지 않아요.</p>`;document.querySelectorAll('#aseg button').forEach(b=>b.classList.toggle('on',b.dataset.m===(U.am||'in')))}
+function authView(){if($('au'))return;$('app').innerHTML=`<div class="au" id="au"><div class="lg"><img class="lgi" src="${LOGO}" alt="TASKON 로고"><div class="tk" aria-label="TASKON">${[...'TASKON'].map((c,i)=>`<span style="animation-delay:${(.5+i*.13).toFixed(2)}s">${c}</span>`).join('')}</div></div><p class="tg2">과제 마감일 관리부터<br>오늘의 할 일 추천까지!</p><div class="af"><div class="seg" id="aseg"><button data-m="in" onclick="A.am('in')">로그인</button><button data-m="up" onclick="A.am('up')">회원가입</button></div><div id="af"></div></div></div>`;authForm()}
+function R(){if(!SESS){authView();return}const c=$('car'),sl=c?c.scrollLeft:0,sy=document.querySelector('.scr');const y=sy?sy.scrollTop:0;
+const v={home,task:tasks,cal:calv,prof}[{home:'home',tasks:'task',cal:'cal',prof:'prof'}[U.tab]]();
+$('app').innerHTML=`<div class="scr"><div class="brd"><img src="${LOGO}" alt="앱 로고"></div>${v}</div><nav class="nav">${[['home','홈','home'],['tasks','과제','task'],['cal','캘린더','cal'],['prof','프로필','user']].map(([k,l,i])=>`<button class="${U.tab===k?'on':''}" onclick="U.tab='${k}';U.ov=null;R()">${svg(i)}${l}</button>`).join('')}</nav>${overlay()}${sheet()}`;
+const n=$('car');if(n){n.style.scrollBehavior='auto';n.scrollLeft=sl;n.style.scrollBehavior=''}
+const s2=document.querySelector('.scr');if(s2&&!U.ov)s2.scrollTop=y;save()}
+/* ---- 동작 ---- */
+const A={
+sc(){const c=$('car');if(!c)return;const cs=[...c.children];const mid=c.scrollLeft+c.clientWidth/2;let b=0,bd=1e9;cs.forEach((e,i)=>{const d=Math.abs(e.offsetLeft+e.offsetWidth/2-mid);if(d<bd){bd=d;b=i}});U.idx=b;cs.forEach((e,i)=>e.classList.toggle('act',i===b));[...$('dots').children].forEach((e,i)=>e.classList.toggle('on',i===b))},
+go(n){const c=$('car');if(!c)return;const e=c.children[Math.max(0,Math.min(c.children.length-1,U.idx+n))];c.scrollTo({left:e.offsetLeft-(c.clientWidth-e.offsetWidth)/2,behavior:'smooth'})},
+async today(){if(!AI.s||U.busy)return;const act=S.tasks.filter(t=>!t.done).sort(cmp);if(!act.length)return;U.busy=true;R();
+const data=act.map(t=>({id:t.id,name:t.name,due:t.due,daysLeft:left(t),importance:imp(t),steps:t.steps.map((s,i)=>({i,title:s.t,min:s.m,done:s.done}))}));
+try{const prompt=`당신은 대학생의 학습 코치입니다. 오늘(${ds(T0())})에 하면 좋을 세부 할 일을 3~5개 추천하세요. 마감이 가까운 과제를 우선하고, 미완료(done:false) 단계만 고르고, 같은 과제는 앞 단계부터 순서대로 고르세요. 총 소요 시간은 약 3시간 이내로 하세요. JSON 객체 하나로 답하세요: {"summary":"오늘 계획을 한두 문장으로","picks":[{"id":"과제 id","i":단계 번호,"why":"15자 내외 이유"}]}\n과제 데이터: ${JSON.stringify(data)}`;const v=await aiRequest('today',prompt);
+const ok=(v&&Array.isArray(v.picks)?v.picks:[]).filter(p=>{const t=S.tasks.find(x=>x.id===p.id);return t&&!t.done&&t.steps[p.i]&&!t.steps[p.i].done}).slice(0,5).map(p=>({id:p.id,i:+p.i,why:String(p.why||'')}));
+if(ok.length)S.today={date:ds(T0()),summary:String(v.summary||''),picks:ok};else toast('추천을 만들지 못했어요. 다시 시도해 주세요')}catch(e){toast(e&&e.code==='not_granted'?'AI 사용이 허용되지 않았어요':'추천을 만들지 못했어요. 다시 시도해 주세요')}
+U.busy=false;R()},
+jump(id,i){const c=$('car'),e=c&&c.querySelector(`[data-k="${id}:${i}"]`);if(e)c.scrollTo({left:e.offsetLeft-(c.clientWidth-e.offsetWidth)/2,behavior:'smooth'})},
+step(id,i){const s=S.tasks.find(t=>t.id===id).steps[i];s.done=!s.done;R()},
+am(m){U.am=m;authForm()},
+async auth(){const up=U.am==='up',e=$('a_e').value.trim().toLowerCase(),p=$('a_p').value,er=m=>{const n=$('aerr');n.textContent=m;n.style.display='block'};
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return er('이메일 형식을 확인해 주세요.');if(p.length<6)return er('비밀번호는 6자 이상이어야 해요.');
+const ac=ra();
+if(up){const n=$('a_n').value.trim();if(!n)return er('이름을 입력해 주세요.');if(p!==$('a_c').value)return er('비밀번호가 서로 달라요.');if(ac[e])return er('이미 가입된 이메일이에요. 로그인해 주세요.');const sl=Math.random().toString(36).slice(2);ac[e]={name:n,salt:sl,hash:await hp(p,sl)};wa(ac);SESS={email:e,name:n};S.prof.name=n}
+else{const c=ac[e];if(!c||c.hash!==await hp(p,c.salt))return er('이메일 또는 비밀번호가 맞지 않아요.');SESS={email:e,name:c.name};S.prof.name=c.name}
+try{localStorage.setItem(SK,JSON.stringify(SESS))}catch(x){}
+U.tab='home';U.am='in';R();toast('환영해요, '+SESS.name+'님!');autoAI()},
+logoutOk(){try{localStorage.removeItem(SK)}catch(e){}SESS=null;U.sheet=null;U.ov=null;U.tab='home';U.am='in';R()},
+ask(t,m,ok,lb='삭제'){U.sheet={t,b:`<p class="sub" style="line-height:1.6">${m}</p><div style="display:flex;gap:10px"><button class="go sec" onclick="U.sheet=null;R()">취소</button><button class="go dng" onclick="${ok}">${lb}</button></div>`};R()},
+stepEdit(id,i){const s=S.tasks.find(t=>t.id===id).steps[i];U.sheet={t:'할 일 수정',b:`<label class="lab">제목</label><input id="s_t" value="${esc(s.t)}"><label class="lab">설명</label><textarea id="s_d" rows="3">${esc(s.d)}</textarea><label class="lab">예상 소요 시간(분)</label><input id="s_m" type="number" min="1" value="${s.m}"><button class="go" style="margin-top:16px" onclick="A.stepSave('${id}',${i})">저장하기</button>`};R()},
+stepSave(id,i){const s=S.tasks.find(t=>t.id===id).steps[i],t=$('s_t').value.trim();if(!t){toast('제목을 입력해 주세요');return}s.t=t;s.d=$('s_d').value.trim();s.m=Math.max(1,Math.round(+$('s_m').value)||s.m);U.sheet=null;toast('수정했어요');R()},
+stepDel(id,i){A.ask('할 일 삭제','이 세부 할 일을 삭제할까요?',`A.stepDelOk('${id}',${i})`)},
+stepDelOk(id,i){S.tasks.find(t=>t.id===id).steps.splice(i,1);U.sheet=null;R()},
+rn(id){const t=S.tasks.find(x=>x.id===id);U.sheet={t:'과제 이름 수정',b:`<label class="lab">과제명</label><input id="r_n" value="${esc(t.name)}"><button class="go" style="margin-top:16px" onclick="A.rnSave('${id}')">저장하기</button>`};R()},
+rnSave(id){const n=$('r_n').value.trim();if(!n){toast('과제명을 입력해 주세요');return}S.tasks.find(x=>x.id===id).name=n;U.sheet=null;toast('이름을 수정했어요');R()},
+cdel(id){U.eid=id;A.del()},
+evForm(id){const e=id?S.events.find(x=>x.id===id):{title:'',start:U.sel,end:U.sel};U.sheet={t:id?'일정 수정':'일정 추가',b:`<label class="lab">일정 제목</label><input id="e_t" value="${esc(e.title)}" placeholder="예: 팀 프로젝트 회의"><label class="lab">시작일</label><input id="e_s" type="date" value="${e.start}"><label class="lab">종료일</label><input id="e_e" type="date" value="${e.end}"><button class="go" style="margin-top:16px" onclick="A.evSave('${id||''}')">${id?'수정 완료':'일정 추가'}</button>`};R()},
+evSave(id){const t=$('e_t').value.trim(),s=$('e_s').value;let e=$('e_e').value||s;if(!t||!s){toast('제목과 시작일을 입력해 주세요');return}if(e<s)e=s;if(id)Object.assign(S.events.find(x=>x.id===id),{title:t,start:s,end:e});else S.events.push({id:'e'+Date.now(),title:t,start:s,end:e});U.sel=s;U.y=+s.slice(0,4);U.m=+s.slice(5,7)-1;U.sheet=null;toast(id?'일정을 수정했어요':'일정을 추가했어요');R()},
+evDel(id){A.ask('일정 삭제','이 일정을 삭제할까요?',`A.evDelOk('${id}')`)},
+evDelOk(id){S.events=S.events.filter(x=>x.id!==id);U.sheet=null;R()},
+pedit(){const p=S.prof;U.sheet={t:'프로필 수정',b:`<label class="lab">이름</label><input id="p_n" value="${esc(p.name)}"><label class="lab">학교 및 학과</label><input id="p_s" value="${esc(p.school)}"><label class="lab">학번 또는 학년</label><input id="p_y" value="${esc(p.year)}"><button class="go" style="margin-top:16px" onclick="A.peSave()">저장하기</button>`};R()},
+peSave(){const n=$('p_n').value.trim();S.prof={name:n||S.prof.name,school:$('p_s').value.trim(),year:$('p_y').value.trim()};U.sheet=null;R()},
+tdone(id){const t=S.tasks.find(x=>x.id===id);t.done=!t.done;t.steps.forEach(s=>{if(t.done)s.done=true});R()},
+open(o){U.ov=o;R()},close(){U.ov=null;U.draft=null;R()},
+manual(){U.draft={name:'',due:ds(addD(T0(),3))+'T23:59',submit:'',desc:'',img:'',imp:2,sampled:false};U.ov='confirm';R()},
+mo(n){U.m+=n;if(U.m<0){U.m=11;U.y--}if(U.m>11){U.m=0;U.y++}R()},
+edit(id){U.eid=id;U.ov='edit';R()},
+rmimg(){if(U.ov==='edit'){const t=S.tasks.find(x=>x.id===U.eid);Object.assign(t,rd());t.img=''}else{Object.assign(U.draft,rd());U.draft.img=''}R()},
+add(){const v=rd();if(!v.name||!v.due){toast('과제명과 마감일을 입력해 주세요');return}const t=mkTask({...v,img:U.draft.img,sample:false});S.tasks.push(t);U.draft=null;U.ov='done';U.sel=t.due.slice(0,10);R();aiSteps(t)},
+fin(){U.ov=null;U.tab='tasks';U.filter='all';R()},
+upd(){const t=S.tasks.find(x=>x.id===U.eid),v=rd();if(!v.name||!v.due){toast('과제명과 마감일을 입력해 주세요');return}const ch=v.name!==t.name||v.desc!==t.desc,old=t.steps;Object.assign(t,v);if(t.created>t.due.slice(0,10))t.created=t.due.slice(0,10);
+if(ch){t.steps=gen(t.name,t.desc);t.steps.forEach(s=>{const o=old.find(x=>x.t===s.t);if(o)s.done=o.done});t.ai=false}U.ov=null;toast('수정되었어요');R();if(ch)aiSteps(t)},
+del(){A.ask('과제 삭제','이 과제를 삭제할까요? 관련 할 일과 캘린더 일정도 함께 삭제돼요.','A.delOk()')},
+delOk(){S.tasks=S.tasks.filter(t=>t.id!==U.eid);U.sheet=null;U.ov=null;R()},
+tg(k){S.set[k]=!S.set[k];if(k==='dark')document.documentElement.dataset.theme=S.set.dark?'dark':'light';R()},
+lead(){const o=['1일 전','3시간 전','1시간 전'];S.set.lead=o[(o.indexOf(S.set.lead)+1)%3];R()},
+async regen(){if(!AI.s){S.tasks.forEach(t=>{t.steps=gen(t.name,t.desc);t.ai=false});toast('AI 미연결 · 규칙 기반으로 다시 만들었어요');R();return}toast('AI가 할 일을 다시 만드는 중…');let n=0;for(const t of S.tasks.filter(x=>!x.done)){if(await aiSteps(t))n++}toast(n+'개 과제의 할 일을 AI로 다시 만들었어요')},
+doneList(){U.ov='doneList';R()},
+info(t,b){U.sheet={t,b:`<p class="sub" style="line-height:1.6">${b}</p><button class="go sec">닫기</button>`};R()},
+
+data(){U.sheet={t:'과제 데이터 관리',b:`<button class="go sec" onclick="A.exp()">데이터 내보내기(JSON)</button><button class="go dng" style="margin-top:10px" onclick="A.rsmp()">샘플로 초기화</button>`};R()},
+exp(){const b=new Blob([JSON.stringify(S.tasks,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='tasks.json';a.click()},
+rsmp(){A.ask('샘플로 초기화','모든 과제와 일정을 지우고 샘플로 되돌릴까요?','A.rsmpOk()','초기화')},
+rsmpOk(){localStorage.removeItem(KEY);S=load();S.events=[];U.sheet=null;R()}};
+function pick(f){if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,700/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+const P=`이 이미지는 대학 과제 공지입니다. 이미지에 실제로 보이는 정보만 추출해 JSON 객체 하나로만 답하세요. 키: name(과제명), due(마감 일시, "YYYY-MM-DDTHH:mm" 24시간제. 연도가 없으면 오늘(${ds(T0())}) 이후 가장 가까운 날짜로), submit(제출 방식), desc(과제 설명 1~2문장). 이미지에서 확인할 수 없는 항목은 추측하지 말고 빈 문자열("")로 두세요.`;c.toBlob(async b=>{const d={img:c.toDataURL('image/jpeg',.6),name:'',due:'',submit:'',desc:'',imp:2,ai:AI.s&&AI.img&&b?'loading':'none'};U.draft=d;U.ov='confirm';R();if(d.ai!=='loading')return;let v=null;try{v=await aiRequest('image',P,d.img)}catch(e){console.error(e)}if(U.draft!==d||U.ov!=='confirm')return;if(v&&typeof v==='object'&&!Array.isArray(v)){if($('f_n'))Object.assign(d,rd());const g=k=>typeof v[k]==='string'?v[k].trim():'';if(!d.name)d.name=g('name');if(!d.due&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(g('due')))d.due=g('due');if(!d.submit)d.submit=g('submit');if(!d.desc)d.desc=g('desc');d.ai='done'}else d.ai='fail';R()},'image/jpeg',.6)};im.src=r.result};r.readAsDataURL(f)}
+$('fcam').onchange=e=>{pick(e.target.files[0]);e.target.value=''};$('falb').onchange=e=>{pick(e.target.files[0]);e.target.value=''};
+document.documentElement.dataset.theme=S.set.dark?'dark':'light';
+if(!S.set.dark&&!localStorage.getItem(KEY))document.documentElement.removeAttribute('data-theme');
+R();aiInit();
+</script></body></html>
