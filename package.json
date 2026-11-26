@@ -1,6 +1,10 @@
+
 {
   "name": "taskon-ai-vercel",
   "version": "1.1.0",
   "private": true,
-  "description": "TASKON 과제 관리 앱 - OpenAI AI 기능 및 Vercel 배포"
+  "description": "TASKON 과제 관리 앱 - AI 기능 및 Vercel 배포",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0"
+  }
 }
