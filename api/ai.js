@@ -46,7 +46,7 @@ module.exports = async function handler(req, res) {
     const parts = [{ text: instructions[task] + "\n\n" + prompt }];
     if (imagePart) parts.push(imagePart);
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
     const upstream = await fetch(endpoint, {
       method: "POST",
